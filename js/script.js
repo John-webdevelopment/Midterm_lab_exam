@@ -1,283 +1,231 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-    const registrationForm =
-        document.getElementById("registrationForm");
+var studentNumberPattern = /^\d{2}-\d{4}-\d{3}$/;
+var emailPattern = /^[^\s@]+@[^\s@]+.[^\s@]+$/;
 
-    const studentName =
-        document.getElementById("studentName");
+var registrationForm;
+var studentName;
+var studentNumber;
+var email;
+var workshop;
+var terms;
 
-    const studentNumber =
-        document.getElementById("studentNumber");
+var nameError;
+var studentNumberError;
+var emailError;
+var workshopError;
+var termsError;
 
-    const email =
-        document.getElementById("email");
+var registerBtn;
+var clearBtn;
 
-    const workshop =
-        document.getElementById("workshop");
+var registrationResult;
+var summaryName;
+var summaryStudentNumber;
+var summaryEmail;
+var summaryWorkshop;
 
-    const terms =
-        document.getElementById("terms");
+registrationForm = document.getElementById("registrationForm");
 
+studentName = document.getElementById("studentName");
+studentNumber = document.getElementById("studentNumber");
+email = document.getElementById("email");
+workshop = document.getElementById("workshop");
+terms = document.getElementById("terms");
 
-    const nameError =
-        document.getElementById("nameError");
+nameError = document.getElementById("nameError");
+studentNumberError = document.getElementById("studentNumberError");
+emailError = document.getElementById("emailError");
+workshopError = document.getElementById("workshopError");
+termsError = document.getElementById("termsError");
 
-    const studentNumberError =
-        document.getElementById("studentNumberError");
+registerBtn = document.getElementById("registerBtn");
+clearBtn = document.getElementById("clearBtn");
 
-    const emailError =
-        document.getElementById("emailError");
+registrationResult = document.getElementById("registrationResult");
 
-    const workshopError =
-        document.getElementById("workshopError");
+summaryName = document.getElementById("summaryName");
+summaryStudentNumber = document.getElementById("summaryStudentNumber");
+summaryEmail = document.getElementById("summaryEmail");
+summaryWorkshop = document.getElementById("summaryWorkshop");
 
-    const termsError =
-        document.getElementById("termsError");
+function clearErrors() {
+nameError.textContent = "";
+studentNumberError.textContent = "";
+emailError.textContent = "";
+workshopError.textContent = "";
+termsError.textContent = "";
+}
 
+function validateName() {
 
-    const registerBtn =
-        document.getElementById("registerBtn");
+if (studentName.value.trim() === "") {
+  nameError.textContent = "Please enter your student name.";
+  return false;
+}
 
-    const clearBtn =
-        document.getElementById("clearBtn");
+return true;
 
+}
 
-    const registrationResult =
-        document.getElementById("registrationResult");
+function validateStudentNumber() {
 
+if (studentNumber.value.trim() === "") {
+  studentNumberError.textContent = "Please enter your student number.";
+  return false;
+}
 
-    const summaryName =
-        document.getElementById("summaryName");
+if (!studentNumberPattern.test(studentNumber.value.trim())) {
+  studentNumberError.textContent =
+    "Student number must follow the format 00-0000-000.";
+  return false;
+}
 
-    const summaryStudentNumber =
-        document.getElementById("summaryStudentNumber");
+return true;
 
-    const summaryEmail =
-        document.getElementById("summaryEmail");
+}
 
-    const summaryWorkshop =
-        document.getElementById("summaryWorkshop");
+function validateEmail() {
 
+if (email.value.trim() === "") {
+  emailError.textContent = "Please enter your email address.";
+  return false;
+}
 
-    registrationResult.hidden = true;
+if (!emailPattern.test(email.value.trim())) {
+  emailError.textContent = "Please enter a valid email address.";
+  return false;
+}
 
+return true;
 
-    function validateStudentInfo(name, studentNumber, email) {
+}
 
-        const namePattern = /^[A-Za-z\s]+$/;
+function validateWorkshop() {
 
-        const studentNumberPattern = /^\d{2}-\d{4}-\d{3}$/;
+if (workshop.value === "") {
+  workshopError.textContent = "Please select a workshop.";
+  return false;
+}
 
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+return true;
 
+}
 
-        const cleanName = name.trim();
+function validateTerms() {
 
-        const cleanStudentNumber =
-            studentNumber.trim();
+if (!terms.checked) {
+  termsError.textContent =
+    "You must accept the Terms and Conditions.";
+  return false;
+}
 
-        const cleanEmail =
-            email.trim();
+return true;
 
+}
 
-        const validName =
-            cleanName.length >= 3 &&
-            namePattern.test(cleanName);
+registrationForm.addEventListener("submit", function (event) {
 
+event.preventDefault();
 
-        const validStudentNumber =
-            studentNumberPattern.test(
-                cleanStudentNumber
-            );
+clearErrors();
 
+var nameIsValid = validateName();
+var studentNumberIsValid = validateStudentNumber();
+var emailIsValid = validateEmail();
+var workshopIsValid = validateWorkshop();
+var termsIsValid = validateTerms();
 
-        const validEmail =
-            emailPattern.test(
-                cleanEmail
-            );
 
+if (
+  nameIsValid &&
+  studentNumberIsValid &&
+  emailIsValid &&
+  workshopIsValid &&
+  termsIsValid
+) {
 
-        return (
-            validName &&
-            validStudentNumber &&
-            validEmail
-        );
-    }
+  summaryName.textContent = studentName.value.trim();
 
+  summaryStudentNumber.textContent =
+    studentNumber.value.trim();
 
-    window.validateStudentInfo =
-        validateStudentInfo;
+  summaryEmail.textContent =
+    email.value.trim();
 
+  summaryWorkshop.textContent =
+    workshop.value;
 
-    registrationForm.addEventListener(
-        "submit",
-        function (event) {
+  registrationResult.hidden = false;
 
-            event.preventDefault();
+  registrationResult.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
 
+} else {
 
-            nameError.textContent = "";
-            studentNumberError.textContent = "";
-            emailError.textContent = "";
-            workshopError.textContent = "";
-            termsError.textContent = "";
+  registrationResult.hidden = true;
 
+}
 
-            registrationResult.hidden = true;
+});
 
+clearBtn.addEventListener("click", function () {
 
-            const nameValue =
-                studentName.value.trim();
+registrationForm.reset();
 
-            const studentNumberValue =
-                studentNumber.value.trim();
+clearErrors();
 
-            const emailValue =
-                email.value.trim();
+registrationResult.hidden = true;
 
+summaryName.textContent = "";
+summaryStudentNumber.textContent = "";
+summaryEmail.textContent = "";
+summaryWorkshop.textContent = "";
 
-            let valid = true;
+studentName.focus();
 
+});
 
-            const namePattern =
-                /^[A-Za-z\s]+$/;
+studentName.addEventListener("input", function () {
 
+if (studentName.value.trim() !== "") {
+  nameError.textContent = "";
+}
 
-            if (
-                nameValue.length < 3 ||
-                !namePattern.test(nameValue)
-            ) {
+});
 
-                nameError.textContent =
-                    "Enter a valid student name.";
+studentNumber.addEventListener("input", function () {
 
-                valid = false;
-            }
+if (studentNumberPattern.test(studentNumber.value.trim())) {
+  studentNumberError.textContent = "";
+}
 
+});
 
-            const studentNumberPattern =
-                /^\d{2}-\d{4}-\d{3}$/;
+email.addEventListener("input", function () {
 
+if (emailPattern.test(email.value.trim())) {
+  emailError.textContent = "";
+}
 
-            if (
-                !studentNumberPattern.test(
-                    studentNumberValue
-                )
-            ) {
+});
 
-                studentNumberError.textContent =
-                    "Enter a valid student number.";
+workshop.addEventListener("change", function () {
 
-                valid = false;
-            }
+if (workshop.value !== "") {
+  workshopError.textContent = "";
+}
 
+});
 
-            const emailPattern =
-                /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+terms.addEventListener("change", function () {
 
+if (terms.checked) {
+  termsError.textContent = "";
+}
 
-            if (
-                !emailPattern.test(emailValue)
-            ) {
-
-                emailError.textContent =
-                    "Enter a valid email address.";
-
-                valid = false;
-            }
-
-
-            if (workshop.value === "") {
-
-                workshopError.textContent =
-                    "Please select a workshop.";
-
-                valid = false;
-            }
-
-
-            if (!terms.checked) {
-
-                termsError.textContent =
-                    "You must accept the Terms and Conditions.";
-
-                valid = false;
-            }
-
-
-            if (!valid) {
-                return;
-            }
-
-
-            if (
-                !validateStudentInfo(
-                    nameValue,
-                    studentNumberValue,
-                    emailValue
-                )
-            ) {
-                return;
-            }
-
-
-            summaryName.textContent =
-                nameValue;
-
-            summaryStudentNumber.textContent =
-                studentNumberValue;
-
-            summaryEmail.textContent =
-                emailValue;
-
-            summaryWorkshop.textContent =
-                workshop.value;
-
-
-            registrationResult.hidden = false;
-
-        }
-    );
-
-
-    clearBtn.addEventListener(
-        "click",
-        function () {
-
-            studentName.value = "";
-
-            studentNumber.value = "";
-
-            email.value = "";
-
-            workshop.value = "";
-
-            terms.checked = false;
-
-
-            nameError.textContent = "";
-
-            studentNumberError.textContent = "";
-
-            emailError.textContent = "";
-
-            workshopError.textContent = "";
-
-            termsError.textContent = "";
-
-
-            summaryName.textContent = "";
-
-            summaryStudentNumber.textContent = "";
-
-            summaryEmail.textContent = "";
-
-            summaryWorkshop.textContent = "";
-
-
-            registrationResult.hidden = true;
-
-        }
-    );
+});
 
 });
